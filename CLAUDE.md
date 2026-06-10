@@ -88,6 +88,22 @@ The spec (`KTZ12X40030.spec`) auto-detects and bundles `libusb-1.0.dll` from the
 
 Crash logs (unhandled exceptions at startup) are written to `%TEMP%\KTZ12X40030_crash.log`.
 
+## Device presets
+
+`DEVICES` dict (top of `main.py`) maps UI dropdown labels to python-can interface strings:
+
+| Label | Interface |
+|-------|-----------|
+| Waveshare USB-CAN-B | `canalystii` |
+| Robotell USB-CAN | `robotell` |
+| SLCAN (Generic) | `slcan` |
+
+For `canalystii`, `_scan_ports()` returns `["0", "1"]` and the channel is cast to `int` before passing to python-can. For all other interfaces it scans serial ports.
+
+## Fault codes dict
+
+`FAULT_CODES` (module-level dict) maps byte 7 of `0x0D259CD0` to a description string. Code `0` = "No Fault"; codes 1–8 cover specific subsystem failures. Unknown codes fall back to `f"Reserved ({fault_code})"` in `decode_instrument()`.
+
 ## Protocol reference (EC KTZ12X40030)
 
 - **Baud rate:** 250 Kbps, **byte order:** Intel (little-endian), **frame type:** extended 29-bit
